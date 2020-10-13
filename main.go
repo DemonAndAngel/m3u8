@@ -114,12 +114,14 @@ func downTs(storeFolder string, s *Segment, result *Result, i int) (err error) {
 	tsFileTmpPath := tsFile + "_tmp"
 	tsFileTmp, err := os.Create(tsFileTmpPath)
 	if err != nil {
+		fmt.Printf("create tsFileTmp failed: %s\n", err.Error())
 		return downTs(storeFolder, s, result, i)
 	}
 	//noinspection GoUnhandledErrorResult
 	defer tsFileTmp.Close()
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
+		fmt.Printf("Read TS file failed: %s\n", err.Error())
 		return downTs(storeFolder, s, result, i)
 	}
 	if s.Key != nil {
