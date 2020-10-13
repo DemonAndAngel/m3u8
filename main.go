@@ -114,14 +114,14 @@ func downTs(storeFolder string, s *Segment, result *Result, i int) (err error) {
 	tsFileTmpPath := tsFile + "_tmp"
 	tsFileTmp, err := os.Create(tsFileTmpPath)
 	if err != nil {
-		fmt.Printf("create tsFileTmp failed: %s\n", err.Error())
+		fmt.Printf("tsFileTmp:" + strconv.Itoa(i) + ".ts_tmp; Create tsFileTmp failed: %s\n", err.Error())
 		return downTs(storeFolder, s, result, i)
 	}
 	//noinspection GoUnhandledErrorResult
 	defer tsFileTmp.Close()
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
-		fmt.Printf("Read TS file failed: %s\n", err.Error())
+		fmt.Printf("tsFileTmp:" + strconv.Itoa(i) + ".ts_tmp; Read TS file failed: %s\n", err.Error())
 		return downTs(storeFolder, s, result, i)
 	}
 	if s.Key != nil {
@@ -129,7 +129,7 @@ func downTs(storeFolder string, s *Segment, result *Result, i int) (err error) {
 		if key != "" {
 			bytes, err = tool.AES128Decrypt(bytes, []byte(key), []byte(s.Key.IV))
 			if err != nil {
-				fmt.Printf("decryt TS failed: %s\n", err.Error())
+				fmt.Printf("tsFileTmp:" + strconv.Itoa(i) + ".ts_tmp; Decryt TS failed: %s\n", err.Error())
 			}
 		}
 	}
@@ -142,13 +142,13 @@ func downTs(storeFolder string, s *Segment, result *Result, i int) (err error) {
 		}
 	}
 	if _, err := tsFileTmp.Write(bytes); err != nil {
-		fmt.Printf("Save TS file failed:%s\n", err.Error())
+		fmt.Printf("tsFileTmp:" + strconv.Itoa(i) + ".ts_tmp; Save TS file failed:%s\n", err.Error())
 		return downTs(storeFolder, s, result, i)
 	}
 	_ = tsFileTmp.Close()
 	// 重命名为正式文件
 	if err = os.Rename(tsFileTmpPath, tsFile); err != nil {
-		fmt.Printf("Rename TS file failed: %s\n", err.Error())
+		fmt.Printf("tsFileTmp:" + strconv.Itoa(i) + ".ts_tmp; Rename TS file failed: %s\n", err.Error())
 		return downTs(storeFolder, s, result, i)
 	}
 	fmt.Printf("下载成功：%s\n", fullURL)
